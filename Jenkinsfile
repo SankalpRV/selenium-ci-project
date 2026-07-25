@@ -10,8 +10,14 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                bat 'python -m pytest tests'
+                bat 'python -m pytest tests --junitxml=report.xml'
             }
+        }
+    }
+
+    post {
+        always {
+            junit 'report.xml'
         }
     }
 }
