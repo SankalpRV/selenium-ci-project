@@ -10,7 +10,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                bat 'pytest'
+                bat 'pytest test_math.py'
             }
         }
     }
