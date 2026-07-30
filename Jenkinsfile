@@ -1,26 +1,16 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.12'
-        }
-    }
+    agent any
 
     stages {
-        stage('Check Python Version') {
+        stage('Run Inside Docker') {
             steps {
-                sh 'python --version'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'pip install -r requirements.txt'
-            }
-        }
-
-        stage('Run Unit Test Only') {
-            steps {
-                sh 'pytest tests/test_math.py'
+                script {
+                    docker.image('python:3.12').inside {
+                        sh 'python --version'
+                        sh 'pip install -r requirements.txt'
+                        sh 'pytest tests/test_math.py'
+                    }
+                }
             }
         }
     }
