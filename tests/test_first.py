@@ -1,10 +1,16 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
 def test_google_search():
-    driver = webdriver.Chrome()
-    driver.maximize_window()
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--start-maximized")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+
+    driver = webdriver.Chrome(options=chrome_options)
 
     driver.get("https://google.com")
 
@@ -12,9 +18,8 @@ def test_google_search():
     search_box.send_keys("Selenium automation testing jobs in Pune")
     search_box.submit()
 
-    time.sleep(3)
+    time.sleep(2)
 
-    # Assertion: check page title contains keyword
     assert "Selenium" in driver.title
 
     driver.quit()
