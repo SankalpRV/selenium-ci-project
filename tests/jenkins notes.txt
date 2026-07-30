@@ -1,0 +1,104 @@
+JENKINS QUICK REVISION NOTES
+🔹 What is Jenkins?
+Open-source CI/CD automation server.
+
+Runs pipelines defined in Jenkinsfile.
+
+🔹 Pipeline Types
+Freestyle (UI based)
+Pipeline (code based)
+Multibranch Pipeline (auto-detect branches)
+Industry standard = Pipeline + Multibranch
+
+🔹 Jenkinsfile Structure
+groovy
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                bat 'echo Hello'
+            }
+        }
+    }
+}
+Important keywords:
+
+pipeline
+agent
+stages
+stage
+steps
+post
+🔹 Agent Types
+any
+label
+docker (requires plugin)
+🔹 Parallel Stages
+groovy
+
+stage('Parallel') {
+    parallel {
+        stage('A') { steps { ... } }
+        stage('B') { steps { ... } }
+    }
+}
+Runs simultaneously (needs multiple executors).
+
+🔹 Multibranch Pipeline
+Automatically:
+
+Detects branches
+Builds per branch
+Uses Jenkinsfile in each branch
+🔹 Credentials Usage
+Store secret in:
+
+Manage Jenkins → Credentials
+
+Use in pipeline:
+
+groovy
+
+withCredentials([string(credentialsId: 'id', variable: 'VAR')]) {
+    bat 'echo %VAR%'
+}
+Jenkins masks secrets automatically.
+
+🔹 Reports
+JUnit:
+
+groovy
+
+junit 'report.xml'
+HTML Publisher plugin:
+
+groovy
+
+publishHTML(...)
+🔹 Important Plugins
+Git Plugin
+Pipeline Plugin
+Multibranch Pipeline Plugin
+Credentials Binding Plugin
+Docker Pipeline Plugin
+HTML Publisher Plugin
+Blue Ocean (UI)
+🔹 Executors
+More executors = more parallel jobs.
+
+Configured in:
+
+Manage Jenkins → Nodes
+
+🔹 Common Errors
+Workspace path issues (Windows + Docker)
+Missing plugin (docker agent not recognized)
+Secrets not found (wrong credentialsId)
+Exit code ≠ 0 → build fails
+🔹 When To Use Jenkins?
+On-prem company
+Legacy infrastructure
+Complex internal pipeline needs

@@ -1,27 +1,17 @@
-name: Basic Python CI
+pipeline {
+    agent any
 
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Verify Python version
-        run: python --version
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+    stages {
+        stage('Run Inside Docker') {
+            steps {
+                script {
+                    docker.image('python:3.12').inside {
+                        sh 'python --version'
+                        sh 'pip install -r requirements.txt'
+                        sh 'pytest tests/test_math.py'
+                    }
+                }
+            }
+        }
+    }
+}
