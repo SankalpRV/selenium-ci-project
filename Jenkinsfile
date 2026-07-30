@@ -10,7 +10,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                bat 'python -m pytest tests --junitxml=report.xml'
+                bat 'python -m pytest tests --junitxml=report.xml --html=report.html --self-contained-html'
             }
         }
     }
@@ -18,6 +18,7 @@ pipeline {
     post {
         always {
             junit 'report.xml'
+            archiveArtifacts artifacts: 'report.html', fingerprint: true
         }
     }
 }
