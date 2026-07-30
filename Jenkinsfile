@@ -8,17 +8,19 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Use Secret') {
             steps {
-                bat 'python -m pytest tests --junitxml=report.xml --html=report.html --self-contained-html'
+                withCredentials([string(credentialsId: 'demo-secret', variable: 'MY_SECRET')]) {
+                    bat 'echo Secret is injected'
+                    bat 'echo %MY_SECRET%'
+                }
             }
         }
-    }
 
-    post {
-        always {
-            junit 'report.xml'
-            archiveArtifacts artifacts: 'report.html', fingerprint: true
+        stage('Run Tests') {
+            steps {
+                bat 'python -m pytest tests'
+            }
         }
     }
 }
