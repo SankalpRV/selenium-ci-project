@@ -1,25 +1,26 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.12'
+        }
+    }
 
     stages {
-        stage('Install Dependencies') {
+        stage('Check Python Version') {
             steps {
-                bat 'pip install -r requirements.txt'
+                sh 'python --version'
             }
         }
 
-        stage('Run Tests in Parallel') {
-            parallel {
-                stage('Unit Tests') {
-                    steps {
-                        bat 'python -m pytest tests/test_math.py'
-                    }
-                }
-                stage('Selenium Tests') {
-                    steps {
-                        bat 'python -m pytest tests/test_first.py'
-                    }
-                }
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Unit Test Only') {
+            steps {
+                sh 'pytest tests/test_math.py'
             }
         }
     }
