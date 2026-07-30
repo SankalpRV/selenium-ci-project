@@ -8,18 +8,18 @@ pipeline {
             }
         }
 
-        stage('Use Secret') {
-            steps {
-                withCredentials([string(credentialsId: 'demo-secret', variable: 'MY_SECRET')]) {
-                    bat 'echo Secret is injected'
-                    bat 'echo %MY_SECRET%'
+        stage('Run Tests in Parallel') {
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        bat 'python -m pytest tests/test_math.py'
+                    }
                 }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                bat 'python -m pytest tests'
+                stage('Selenium Tests') {
+                    steps {
+                        bat 'python -m pytest tests/test_first.py'
+                    }
+                }
             }
         }
     }
