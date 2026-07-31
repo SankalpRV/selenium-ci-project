@@ -1,38 +1,43 @@
-name: Python Matrix CI
+name: Environment Based CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - staging
+      - dev
+      - feature/**
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: ['3.10', '3.11', '3.12']
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
+          python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Print Base URL
-        run: echo "Base URL is $BASE_URL"
-        env:
-          BASE_URL: ${{ secrets.BASE_URL }}
+      - name: Select Environment URL
+        id: set-env
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            echo "BASE_URL=${{ secrets.PROD_URL }}" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF}" == "refs/heads/staging" ]]; then
+            echo "BASE_URL=${{ secrets.STAGING_URL }}" >> $GITHUB_ENV
+          else
+            echo "BASE_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+          fi
 
       - name: Run tests
         run: pytest tests -v
         env:
-          BASE_URL: ${{ secrets.BASE_URL }}
+          BASE_URL: ${{ env.BASE_URL }}
