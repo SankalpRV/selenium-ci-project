@@ -34,3 +34,5 @@ jobs:
 
       - name: Run tests
         run: pytest tests -v
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}

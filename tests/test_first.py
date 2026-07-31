@@ -1,4 +1,5 @@
 import time
+import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -12,7 +13,8 @@ def test_google_search():
 
     driver = webdriver.Chrome(options=chrome_options)
 
-    driver.get("https://google.com")
+    base_url = os.getenv("BASE_URL")
+    driver.get(base_url)
 
     search_box = driver.find_element(By.NAME, "q")
     search_box.send_keys("Selenium automation testing jobs in Pune")
